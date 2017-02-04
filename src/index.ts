@@ -5,10 +5,10 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import './index.css'
 
-import { routing } from './routing'
+import { routingElement } from './routing'
 
 
 ReactDOM.render(
-  routing,
+  routingElement,
   document.getElementById('root')
 )
