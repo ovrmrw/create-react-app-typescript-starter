@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { UIRouter, UIView, UISref, UISrefActive, pushStateLocationPlugin } from 'ui-router-react'
+import { UIRouter, UIView, UISref, UISrefActive, hashLocationPlugin } from 'ui-router-react'
 
 import { App } from './App'
 
@@ -30,7 +30,7 @@ const root = {
 
 
 export const routing = (
-  <UIRouter plugins={[pushStateLocationPlugin]} states={[helloState, aboutState, appState, root]}>
+  <UIRouter plugins={[hashLocationPlugin]} states={[helloState, aboutState, appState, root]}>
     <div>
       <UISrefActive class="active">
         <UISref to="hello"><a> Hello </a></UISref>
