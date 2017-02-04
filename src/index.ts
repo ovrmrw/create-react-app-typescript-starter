@@ -3,11 +3,12 @@ import 'rxjs'
 
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import { App } from './App'
 import './index.css'
+
+import { routing } from './routing'
 
 
 ReactDOM.render(
-  <App />,
+  routing,
   document.getElementById('root')
 )

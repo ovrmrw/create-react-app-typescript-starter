@@ -23,6 +23,8 @@ export class App extends MyReactPureComponent<{}, AppState> {
 
 
   componentWillMount() {
+    this.store.getter().take(1).subscribe(state => this.setState({ ...state }))
+
     this.disposable = this.store.getter()
       .filterByUpdatedKey(KEY.counter)
       .subscribe(state => this.setState({ ...state }))
