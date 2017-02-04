@@ -5,6 +5,28 @@ Starter kit for React app with TypeScript based on create-react-app
 
 ---
 
+## Setup
+
+```
+$ yarn install
+```
+
+## Run
+
+```
+$ npm start
+```
+
+## Deploy
+
+```
+$ npm run deploy
+```
+
+---
+
+(create-react-app)
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
