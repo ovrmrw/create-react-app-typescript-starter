@@ -2,7 +2,6 @@ import { injectable, inject } from 'inversify'
 import { Observable } from 'rxjs'
 
 import { ReactiveStore, KEY, AppState } from '../state'
-import { container } from '../inversify.config'
 
 
 
