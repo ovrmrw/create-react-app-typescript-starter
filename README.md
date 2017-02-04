@@ -1,6 +1,8 @@
 # create-react-app-typescript-starter
 Starter kit for React app with TypeScript based on create-react-app
 
+[Demo on GitHub Pages]( https://ovrmrw.github.io/create-react-app-typescript-starter)
+
 ---
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
