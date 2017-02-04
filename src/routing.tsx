@@ -8,7 +8,7 @@ const Welcome = () => <h3>Welcome Page</h3>
 const About = () => <h3>Abount Page</h3>
 
 
-const RouterView = React.createClass<{}, {}>({
+class RouterView extends React.Component<Router.RouteComponentProps<{}, {}>, {}> {
   render() {
     return (
       <div>
@@ -21,7 +21,7 @@ const RouterView = React.createClass<{}, {}>({
       </div>
     )
   }
-})
+}
 
 
 export const routingElement = (
