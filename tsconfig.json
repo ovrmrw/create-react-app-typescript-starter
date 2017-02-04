@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "outDir": ".dest-tsc",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es5",
+    "jsx": "react",
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "baseUrl": "",
+    "paths": {
+      "react": [
+        "custom-types/react"
+      ],
+      "enzyme": [
+        "custom-types/enzyme"
+      ]
+    },
+    "importHelpers": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

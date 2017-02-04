@@ -1,0 +1,29 @@
+{
+    "name": "enzyme",
+    "libraryName": "Enzyme",
+    "sourceRepoURL": "https://www.github.com/DefinitelyTyped/DefinitelyTyped",
+    "data": {
+        "authors": "Marian Palkus <https://github.com/MarianPalkus>, Cap3 <http://www.cap3.de>, Ivo Stratev <https://github.com/NoHomey>, Tom Crockett <https://github.com/pelotom>",
+        "dependencies": {
+            "react": "*"
+        },
+        "pathMappings": {},
+        "libraryMajorVersion": 2,
+        "libraryMinorVersion": 7,
+        "typeScriptVersion": "2.1",
+        "libraryName": "Enzyme",
+        "typingsPackageName": "enzyme",
+        "projectName": "https://github.com/airbnb/enzyme",
+        "sourceRepoURL": "https://www.github.com/DefinitelyTyped/DefinitelyTyped",
+        "globals": [],
+        "declaredModules": [
+            "enzyme/."
+        ],
+        "files": [
+            "index.d.ts"
+        ],
+        "hasPackageJson": false,
+        "contentHash": "dcf3479571de5e9470ad9d50b2f5bafd68a6728ff9a9c2eb14d6a4f98ab9fa3e"
+    },
+    "isLatest": true
+}
