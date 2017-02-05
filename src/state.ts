@@ -6,6 +6,7 @@ export const initialState: AppState = {
   increment: {
     counter: 0,
   },
+  lastUpdated: 0,
 }
 
 
@@ -21,6 +22,7 @@ export const storeInstance = getReactiveStoreAsSingleton(initialState, {
 
 export interface AppState {
   increment: IncrementState,
+  lastUpdated: number,
 }
 
 

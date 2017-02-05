@@ -9,6 +9,7 @@
     "@types/react": "^15.0.6",
     "@types/react-dom": "^0.14.22",
     "@types/react-router": "^3.0.0",
+    "@types/whatwg-fetch": "^0.0.33",
     "autoprefixer": "6.5.1",
     "babel-core": "6.17.0",
     "babel-eslint": "7.1.1",

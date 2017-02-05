@@ -26,7 +26,7 @@ export class App extends MyReactPureComponent<{}, AppState> {
     this.store.getter().take(1).subscribe(state => this.setState({ ...state }))
 
     this.disposable = this.store.getter()
-      .filterByUpdatedKey(KEY.increment)
+      .filterByUpdatedKey(KEY.increment, KEY.lastUpdated)
       .subscribe(state => this.setState({ ...state }))
   }
 
@@ -67,7 +67,8 @@ export class App extends MyReactPureComponent<{}, AppState> {
           <button onClick={(e) => this.increment(e)}>Increment</button>
           <button onClick={(e) => this.decrement(e)}>Decrement</button>
           <button onClick={(e) => this.reset(e)}>Reset</button>
-          <h1>{s.increment.counter}</h1>
+          <h1>counter: {s.increment.counter}</h1>
+          <h3>lastUpdated: {s.lastUpdated}</h3>
         </div>
         <a href="https://github.com/ovrmrw/create-react-app-typescript-starter">GitHub</a>
       </div>
