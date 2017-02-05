@@ -7,7 +7,7 @@ import { IncrementActions } from './actions/increment.actions'
 import { AjaxActions } from './actions/ajax.actions'
 
 
-const rootContainer = new Container()
+const rootContainer = new Container({ defaultScope: 'Singleton' })
 rootContainer.bind(ReactiveStore).toConstantValue(storeInstance)
 rootContainer.bind(Actions).toSelf()
 rootContainer.bind(IncrementActions).toSelf()
