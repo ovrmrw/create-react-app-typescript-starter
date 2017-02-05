@@ -9,6 +9,8 @@ Starter kit for React app with TypeScript based on create-react-app
 
 ```
 $ yarn install
+or
+$ npm install
 ```
 
 ## Run

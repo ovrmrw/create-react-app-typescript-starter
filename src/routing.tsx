@@ -8,7 +8,7 @@ const Welcome = () => <h3>Welcome Page</h3>
 const About = () => <h3>Abount Page</h3>
 
 
-class RouterView extends React.Component<Router.RouteComponentProps<{}, {}>, {}> {
+class RouterComponent extends React.PureComponent<Router.RouteComponentProps<{}, {}>, {}> {
   render() {
     return (
       <div>
@@ -24,9 +24,9 @@ class RouterView extends React.Component<Router.RouteComponentProps<{}, {}>, {}>
 }
 
 
-export const routingElement = (
+export const routerElement = (
   <Router history={hashHistory}>
-    <Route path="/" component={RouterView}>
+    <Route path="/" component={RouterComponent}>
       <IndexRoute component={App} />
       <Route path="app" component={App} />
       <Route path="welcome" component={Welcome} />

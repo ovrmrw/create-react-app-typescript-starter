@@ -3,7 +3,9 @@ export { ReactiveStore }
 
 
 export const initialState: AppState = {
-  counter: 0,
+  increment: {
+    counter: 0,
+  },
 }
 
 
@@ -18,5 +20,10 @@ export const storeInstance = getReactiveStoreAsSingleton(initialState, {
 
 
 export interface AppState {
+  increment: IncrementState,
+}
+
+
+export interface IncrementState {
   counter: number,
 }

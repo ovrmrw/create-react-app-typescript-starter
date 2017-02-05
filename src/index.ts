@@ -1,14 +1,14 @@
 import 'reflect-metadata'
-import 'rxjs'
+import 'rxjs/Rx'
 
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import './index.css'
 
-import { routingElement } from './routing'
+import { routerElement } from './routing'
 
 
 ReactDOM.render(
-  routingElement,
+  routerElement,
   document.getElementById('root')
 )

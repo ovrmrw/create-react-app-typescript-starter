@@ -5,7 +5,7 @@ import './App.css'
 import { MyReactPureComponent } from './hoc'
 import { lazyInject } from './inversify.config'
 import { ReactiveStore, KEY, AppState } from './state'
-import { Actions } from './lib/actions'
+import { Actions } from './actions'
 
 
 
@@ -26,7 +26,7 @@ export class App extends MyReactPureComponent<{}, AppState> {
     this.store.getter().take(1).subscribe(state => this.setState({ ...state }))
 
     this.disposable = this.store.getter()
-      .filterByUpdatedKey(KEY.counter)
+      .filterByUpdatedKey(KEY.increment)
       .subscribe(state => this.setState({ ...state }))
   }
 
@@ -37,17 +37,17 @@ export class App extends MyReactPureComponent<{}, AppState> {
 
 
   increment(event): Promise<void> {
-    return this.actions.incrementCounter()
+    return this.actions.increment.incrementCounter()
   }
 
 
   decrement(event): Promise<void> {
-    return this.actions.decrementCounter()
+    return this.actions.increment.decrementCounter()
   }
 
 
   reset(event): Promise<void> {
-    return this.actions.resetCounter()
+    return this.actions.increment.resetCounter()
   }
 
 
@@ -67,7 +67,7 @@ export class App extends MyReactPureComponent<{}, AppState> {
           <button onClick={(e) => this.increment(e)}>Increment</button>
           <button onClick={(e) => this.decrement(e)}>Decrement</button>
           <button onClick={(e) => this.reset(e)}>Reset</button>
-          <h1>{s.counter}</h1>
+          <h1>{s.increment.counter}</h1>
         </div>
         <a href="https://github.com/ovrmrw/create-react-app-typescript-starter">GitHub</a>
       </div>

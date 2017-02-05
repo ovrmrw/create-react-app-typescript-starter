@@ -1,2 +1,2 @@
 require('reflect-metadata')
-require('rxjs')
+require('rxjs/Rx')

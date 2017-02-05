@@ -4,8 +4,16 @@ var fs = require('fs');
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebookincubator/create-react-app/issues/637
 var appDirectory = fs.realpathSync(process.cwd());
+// function resolveApp(relativePath) {
+//   return path.resolve(appDirectory, relativePath);
+// }
 function resolveApp(relativePath) {
-  return path.resolve(appDirectory, relativePath);
+  var filePath = path.resolve(appDirectory, relativePath)
+  if (fs.existsSync(filePath)) {
+    return filePath
+  } else {
+    return null
+  }
 }
 
 // We support resolving modules according to `NODE_PATH`.
@@ -34,7 +42,7 @@ module.exports = {
   appBuild: resolveApp('build'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveApp('src/index.ts'),
+  appIndexJs: resolveApp('src/index.ts') || resolveApp('src/index.tsx'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   yarnLockFile: resolveApp('yarn.lock'),
