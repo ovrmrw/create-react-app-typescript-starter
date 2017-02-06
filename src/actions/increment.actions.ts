@@ -11,30 +11,28 @@ export class IncrementActions {
   constructor(
     @inject(ReactiveStore)
     private store: ReactiveStore<AppState>,
+    @inject(AjaxActions)
     private ajaxActions: AjaxActions,
-  ) {
-    this.ajaxActions.jpTimestamp$
-      .subscribe(timestamp => this.store.setter(KEY.lastUpdated, timestamp))
-  }
+  ) { }
 
 
   incrementCounter(): Promise<void> {
     return this.store.setter(KEY.increment, (p) => ({ counter: p.counter + 1 }))
       .then(() => this.store.setter(KEY.increment, Observable.of(incrementCallback).delay(500)))
-      .then(() => this.ajaxActions.requestJpTimestamp())
+      .then(() => this.store.setter(KEY.lastUpdated, this.ajaxActions.requestJpTimestamp$()))
   }
 
 
   decrementCounter(): Promise<void> {
     return this.store.setter(KEY.increment, (p) => ({ counter: p.counter - 1 }))
       .then(() => this.store.setter(KEY.increment, Observable.of(decrementCallback).delay(500)))
-      .then(() => this.ajaxActions.requestJpTimestamp())
+      .then(() => this.store.setter(KEY.lastUpdated, this.ajaxActions.requestJpTimestamp$()))
   }
 
 
   resetCounter(): Promise<void> {
     return this.store.setter(KEY.increment, this.store.initialState.increment)
-      .then(() => this.ajaxActions.requestJpTimestamp())
+      .then(() => this.store.setter(KEY.lastUpdated, this.ajaxActions.requestJpTimestamp$()))
   }
 
 }
