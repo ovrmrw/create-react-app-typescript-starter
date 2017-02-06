@@ -4,17 +4,17 @@ var fs = require('fs');
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebookincubator/create-react-app/issues/637
 var appDirectory = fs.realpathSync(process.cwd());
-// function resolveApp(relativePath) { // @ovrmrw
-//   return path.resolve(appDirectory, relativePath);
-// }
-function resolveApp(relativePath) { // @ovrmrw
-  var filePath = path.resolve(appDirectory, relativePath)
-  if (fs.existsSync(filePath)) {
-    return filePath
-  } else {
-    return null
-  }
+function resolveApp(relativePath) {
+  return path.resolve(appDirectory, relativePath);
 }
+// function resolveApp(relativePath) { // @ovrmrw
+//   var filePath = path.resolve(appDirectory, relativePath)
+//   if (fs.existsSync(filePath)) {
+//     return filePath
+//   } else {
+//     return null
+//   }
+// }
 
 // We support resolving modules according to `NODE_PATH`.
 // This lets you use absolute paths in imports inside large monorepos:
@@ -42,7 +42,7 @@ module.exports = {
   appBuild: resolveApp('build'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveApp('src/index.ts') || resolveApp('src/index.tsx'), // @ovrmrw
+  appIndexJs: resolveApp('src/index.ts'), // @ovrmrw
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   yarnLockFile: resolveApp('yarn.lock'),
