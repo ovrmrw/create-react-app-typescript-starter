@@ -1,9 +1,8 @@
-import { Container } from 'inversify'
-
+import { container } from '../inversify.config'
+import { ReactiveStore, ReactiveStoreForAppState, AppState } from '../state'
 import { IncrementActions } from './increment.actions'
 import { AjaxActions } from './ajax.actions'
 import { Testing } from '../symbols'
-import { ReactiveStore, ReactiveStoreForAppState, AppState } from '../state'
 
 
 const initialState: AppState = {
@@ -24,20 +23,18 @@ describe('IncrementActions test', () => {
 
 
   beforeEach(() => {
-    const container = new Container()
-    container.bind(Testing).toConstantValue(true)
-    container.bind(ReactiveStoreForAppState).toConstantValue(new ReactiveStore(initialState, { testing: true }))
-    container.bind(IncrementActions).toSelf().inSingletonScope()
-    container.bind(AjaxActions).toSelf().inSingletonScope()
+    const testContainer = container.createChild()
+    testContainer.bind(Testing).toConstantValue(true)
+    testContainer.bind(ReactiveStoreForAppState).toConstantValue(new ReactiveStore(initialState, { testing: true }))
 
-    incrementActions = container.get(IncrementActions)
-    ajaxActions = container.get(AjaxActions)
-    store = container.get(ReactiveStoreForAppState)
+    incrementActions = testContainer.get(IncrementActions)
+    ajaxActions = testContainer.get(AjaxActions)
+    store = testContainer.get(ReactiveStoreForAppState)
   })
 
 
   it('increment', () => {
-    let value: number
+    let value: number | undefined
     store.getter()
       .subscribe(state => value = state.increment.counter)
 
@@ -49,7 +46,7 @@ describe('IncrementActions test', () => {
 
 
   it('decrement', () => {
-    let value: number
+    let value: number | undefined
     store.getter()
       .subscribe(state => value = state.increment.counter)
 
@@ -61,7 +58,7 @@ describe('IncrementActions test', () => {
 
 
   it('reset', () => {
-    let value: number
+    let value: number | undefined
     store.getter()
       .subscribe(state => value = state.increment.counter)
 

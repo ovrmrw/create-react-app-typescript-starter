@@ -1,7 +1,5 @@
-import { Container } from 'inversify'
-
-import { AjaxActions } from './ajax.actions'
 import { container } from '../inversify.config'
+import { AjaxActions } from './ajax.actions'
 import { Testing } from '../symbols'
 
 
@@ -13,20 +11,19 @@ describe('AjaxActions test', () => {
 
 
   beforeEach(() => {
-    const container = new Container()
-    container.bind(Testing).toConstantValue(true)
-    container.bind(AjaxActions).toSelf().inSingletonScope()
+    const testContainer = container.createChild()
+    testContainer.bind(Testing).toConstantValue(true)
 
-    ajaxActions = container.get(AjaxActions)
+    ajaxActions = testContainer.get(AjaxActions)
   })
 
 
   it('requestJpTimestamp$', () => {
-    let value: number = 0
+    let value: number | undefined
     ajaxActions.requestJpTimestamp$()
       .subscribe(timestamp => value = timestamp)
 
-    expect(value).toBe(0)
+    expect(value).toBe(undefined)
     jest.runAllTimers()
     expect(value).toBe(1)
   })
