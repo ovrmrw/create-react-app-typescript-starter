@@ -10,10 +10,9 @@ import { Testing } from './symbols'
 
 const rootContainer = new Container(/*{ defaultScope: 'Singleton' }*/)
 rootContainer.bind(ReactiveStoreForAppState).toConstantValue(storeInstance)
-rootContainer.bind(Actions).toSelf()
-rootContainer.bind(IncrementActions).toSelf()
-rootContainer.bind(AjaxActions).toSelf()
-// rootContainer.bind(Testing).toConstantValue(true)
+rootContainer.bind(Actions).toSelf().inSingletonScope()
+rootContainer.bind(IncrementActions).toSelf().inSingletonScope()
+rootContainer.bind(AjaxActions).toSelf().inSingletonScope()
 
 
 export const container = rootContainer.createChild()
