@@ -1,9 +1,11 @@
+import { Container } from 'inversify'
+
 import { container } from '../inversify.config'
 import { AjaxActions } from './ajax.actions'
 import { Testing } from '../symbols'
 
 
-jest.useFakeTimers()
+// jest.useFakeTimers()
 
 
 describe('AjaxActions test', () => {
@@ -11,21 +13,26 @@ describe('AjaxActions test', () => {
 
 
   beforeEach(() => {
-    const testContainer = container.createChild()
-    testContainer.bind(Testing).toConstantValue(true)
+    const container = new Container()
+    container.bind(Testing).toConstantValue(true)
+    container.bind(AjaxActions).toSelf().inSingletonScope()
 
-    ajaxActions = testContainer.get(AjaxActions)
+    ajaxActions = container.get(AjaxActions)
   })
 
 
-  it('requestJpTimestamp$', () => {
+  it('requestJpTimestamp$', (done) => {
     let value: number | undefined
     ajaxActions.requestJpTimestamp$()
-      .subscribe(timestamp => value = timestamp)
+      .subscribe({
+        next: timestamp => value = timestamp,
+        complete: () => {
+          expect(value).toBe(1)
+          done()
+        }
+      })
 
     expect(value).toBe(undefined)
-    jest.runAllTimers()
-    expect(value).toBe(1)
   })
 
 })

@@ -1,4 +1,5 @@
-import { container } from '../inversify.config'
+import { Container } from 'inversify'
+
 import { ReactiveStore, ReactiveStoreForAppState, AppState } from '../state'
 import { IncrementActions } from './increment.actions'
 import { AjaxActions } from './ajax.actions'
@@ -13,7 +14,7 @@ const initialState: AppState = {
 }
 
 
-jest.useFakeTimers()
+// jest.useFakeTimers()
 
 
 describe('IncrementActions test', () => {
@@ -23,60 +24,48 @@ describe('IncrementActions test', () => {
 
 
   beforeEach(() => {
-    const testContainer = container.createChild()
-    testContainer.bind(Testing).toConstantValue(true)
-    testContainer.bind(ReactiveStoreForAppState).toConstantValue(new ReactiveStore(initialState, { testing: true }))
+    const container = new Container()
+    container.bind(Testing).toConstantValue(true)
+    container.bind(ReactiveStoreForAppState).toConstantValue(new ReactiveStore(initialState, { testing: true }))
+    container.bind(IncrementActions).toSelf().inSingletonScope()
+    container.bind(AjaxActions).toSelf().inSingletonScope()
 
-    incrementActions = testContainer.get(IncrementActions)
-    ajaxActions = testContainer.get(AjaxActions)
-    store = testContainer.get(ReactiveStoreForAppState)
+    incrementActions = container.get(IncrementActions)
+    ajaxActions = container.get(AjaxActions)
+    store = container.get(ReactiveStoreForAppState)
   })
 
 
-  it('increment', () => {
-    let value: number | undefined
-    store.getter()
-      .subscribe(state => value = state.increment.counter)
-
-    incrementActions.incrementCounter()
-      .then(() => {
-        expect(value).toBe(102)
-      })
+  it('increment', async () => {
+    await incrementActions.incrementCounter()
+    const state = await store.getterAsPromise()
+    expect(state.increment).toEqual({ counter: 102 })
+    expect(state.lastUpdated).toBe(1)
   })
 
 
-  it('decrement', () => {
-    let value: number | undefined
-    store.getter()
-      .subscribe(state => value = state.increment.counter)
-
-    incrementActions.decrementCounter()
-      .then(() => {
-        expect(value).toBe(98)
-      })
+  it('decrement', async () => {
+    await incrementActions.decrementCounter()
+    const state = await store.getterAsPromise()
+    expect(state.increment).toEqual({ counter: 98 })
+    expect(state.lastUpdated).toBe(1)
   })
 
 
-  it('reset', () => {
-    let value: number | undefined
-    store.getter()
-      .subscribe(state => value = state.increment.counter)
-
-    incrementActions.incrementCounter()
-      .then(() => incrementActions.incrementCounter())
-      .then(() => incrementActions.resetCounter())
-      .then(() => {
-        expect(value).toBe(100)
-      })
+  it('reset', async () => {
+    await incrementActions.incrementCounter()
+    await incrementActions.incrementCounter()
+    await incrementActions.resetCounter()
+    const state = await store.getterAsPromise()
+    expect(state.increment).toEqual({ counter: 100 })
+    expect(state.lastUpdated).toBe(1)
   })
 
 
-  it('requestJpTimestamp$ is called.', () => {
+  it('requestJpTimestamp$ is called.', async () => {
     ajaxActions.requestJpTimestamp$ = jest.fn().mockImplementation(() => Promise.resolve())
-    incrementActions.incrementCounter()
-      .then(() => {
-        expect(ajaxActions.requestJpTimestamp$).toBeCalled()
-      })
+    await incrementActions.incrementCounter()
+    expect(ajaxActions.requestJpTimestamp$).toBeCalled()
   })
 
 })
