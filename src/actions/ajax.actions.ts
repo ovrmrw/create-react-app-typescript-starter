@@ -10,13 +10,12 @@ import { lazyInject } from '../inversify.config'
 
 @injectable()
 export class AjaxActions {
-  @inject(Testing) @optional()
-  private testing: boolean | undefined
-
   private jpTimestampAjaxSubject$ = new Subject<AjaxObject>()
 
 
-  constructor() {
+  constructor(
+    @inject(Testing) @optional() private testing: boolean | undefined,
+  ) {
     this.jpTimestampAjaxSubject$
       .switchMap(ajaxObj => {
         return Observable.ajax(ajaxObj.request)

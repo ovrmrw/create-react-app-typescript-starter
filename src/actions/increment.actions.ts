@@ -8,10 +8,10 @@ import { AjaxActions } from './ajax.actions'
 
 @injectable()
 export class IncrementActions {
-  @inject(ReactiveStoreForAppState)
-  private store: ReactiveStore<AppState>
-  @inject(AjaxActions)
-  private ajaxActions: AjaxActions
+  constructor(
+    @inject(ReactiveStoreForAppState) private store: ReactiveStore<AppState>,
+    @inject(AjaxActions) private ajaxActions: AjaxActions,
+  ) { }
 
 
   incrementCounter(): Promise<void> {

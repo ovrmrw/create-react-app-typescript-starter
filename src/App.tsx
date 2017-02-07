@@ -10,10 +10,8 @@ import { Actions } from './actions'
 
 
 export class App extends MyReactPureComponent<{}, AppState> {
-  @lazyInject(ReactiveStoreForAppState)
-  store: ReactiveStore<AppState>
-  @lazyInject(Actions)
-  actions: Actions
+  @lazyInject(ReactiveStoreForAppState) private store: ReactiveStore<AppState>
+  @lazyInject(Actions) private actions: Actions
 
 
   constructor(props) {
