@@ -18,13 +18,14 @@ export const storeInstance = getReactiveStoreAsSingleton(initialState, {
   // useFreeze: true,
 })
 
+export class ReactiveStoreForAppState extends ReactiveStore<AppState> { }
+
 
 
 export interface AppState {
   increment: IncrementState,
   lastUpdated: number,
 }
-
 
 export interface IncrementState {
   counter: number,

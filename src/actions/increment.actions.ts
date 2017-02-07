@@ -1,19 +1,17 @@
 import { injectable, inject } from 'inversify'
 import { Observable } from 'rxjs/Observable'
 
-import { ReactiveStore, KEY, AppState, IncrementState } from '../state'
+import { ReactiveStore, ReactiveStoreForAppState, KEY, AppState, IncrementState } from '../state'
 import { AjaxActions } from './ajax.actions'
 
 
 
 @injectable()
 export class IncrementActions {
-  constructor(
-    @inject(ReactiveStore)
-    private store: ReactiveStore<AppState>,
-    @inject(AjaxActions)
-    private ajaxActions: AjaxActions,
-  ) { }
+  @inject(ReactiveStoreForAppState)
+  private store: ReactiveStore<AppState>
+  @inject(AjaxActions)
+  private ajaxActions: AjaxActions
 
 
   incrementCounter(): Promise<void> {

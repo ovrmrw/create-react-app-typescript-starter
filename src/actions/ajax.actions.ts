@@ -4,18 +4,19 @@ import { Subject } from 'rxjs/Subject'
 import { AjaxResponse, AjaxRequest } from 'rxjs/observable/dom/ajaxObservable'
 
 import { Testing } from '../symbols'
+import { lazyInject } from '../inversify.config'
 
 
 
 @injectable()
 export class AjaxActions {
+  @inject(Testing) @optional()
+  private testing: boolean | undefined
+
   private jpTimestampAjaxSubject$ = new Subject<AjaxObject>()
 
 
-  constructor(
-    @inject(Testing) @optional()
-    private testing: Testing
-  ) {
+  constructor() {
     this.jpTimestampAjaxSubject$
       .switchMap(ajaxObj => {
         return Observable.ajax(ajaxObj.request)
@@ -36,26 +37,36 @@ export class AjaxActions {
 
 
   requestJpTimestamp$(): Observable<number> {
-    if (!this.testing) {
-      const responseSubject$ = new Subject<AjaxResponse>()
-      const ajaxObj: AjaxObject = {
-        request: {
-          url: 'https://ntp-a1.nict.go.jp/cgi-bin/json',
-          crossDomain: true,
-        },
-        responseSubject$,
-      }
-
-      this.jpTimestampAjaxSubject$.next(ajaxObj)
-
-      return responseSubject$
-        .take(1)
-        .map(data => data.response)
-        .map(res => res.st as number)
-        .map(value => value * 1000)
-    } else { // this.testing is truthy.
-      return Observable.of(1).delay(200)
+    if (this.testing) {
+      return this.requestJpTimestampForTesting$()
+    } else { // this.testing === false.
+      return this.requestJpTimestampForProduction$()
     }
+  }
+
+
+  private requestJpTimestampForProduction$(): Observable<number> {
+    const responseSubject$ = new Subject<AjaxResponse>()
+    const ajaxObj: AjaxObject = {
+      request: {
+        url: 'https://ntp-a1.nict.go.jp/cgi-bin/json',
+        crossDomain: true,
+      },
+      responseSubject$,
+    }
+
+    this.jpTimestampAjaxSubject$.next(ajaxObj)
+
+    return responseSubject$
+      .take(1)
+      .map(data => data.response)
+      .map(res => res.st as number)
+      .map(value => value * 1000)
+  }
+
+
+  private requestJpTimestampForTesting$(): Observable<number> {
+    return Observable.of(1).delay(200)
   }
 
 }

@@ -1,5 +1,1 @@
-import { injectable } from 'inversify'
-
-
-@injectable()
-export class Testing { }
+export const Testing = Symbol('Testing')

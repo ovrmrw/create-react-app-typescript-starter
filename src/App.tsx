@@ -4,13 +4,13 @@ import './App.css'
 
 import { MyReactPureComponent } from './hoc'
 import { lazyInject } from './inversify.config'
-import { ReactiveStore, KEY, AppState } from './state'
+import { ReactiveStore, ReactiveStoreForAppState, KEY, AppState } from './state'
 import { Actions } from './actions'
 
 
 
 export class App extends MyReactPureComponent<{}, AppState> {
-  @lazyInject(ReactiveStore)
+  @lazyInject(ReactiveStoreForAppState)
   store: ReactiveStore<AppState>
   @lazyInject(Actions)
   actions: Actions
