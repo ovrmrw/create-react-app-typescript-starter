@@ -1,4 +1,4 @@
-import { Container, injectable, unmanaged } from 'inversify'
+import { Container } from 'inversify'
 import getDecorators from 'inversify-inject-decorators'
 
 import { ReactiveStore, storeInstance, ReactiveStoreForAppState } from './state'
