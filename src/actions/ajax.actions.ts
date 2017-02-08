@@ -1,9 +1,8 @@
-import { injectable, inject, optional } from 'inversify'
+import { injectable } from 'inversify'
 import { Observable } from 'rxjs/Observable'
 import { Subject } from 'rxjs/Subject'
 import { AjaxResponse, AjaxRequest } from 'rxjs/observable/dom/ajaxObservable'
 
-import { Testing } from '../symbols'
 import { lazyInject } from '../inversify.config'
 
 
@@ -13,9 +12,7 @@ export class AjaxActions {
   private jpTimestampAjaxSubject$ = new Subject<AjaxObject>()
 
 
-  constructor(
-    @inject(Testing) @optional() private testing: boolean | undefined,
-  ) {
+  constructor() {
     this.jpTimestampAjaxSubject$
       .switchMap(ajaxObj => {
         return Observable.ajax(ajaxObj.request)
@@ -36,15 +33,6 @@ export class AjaxActions {
 
 
   requestJpTimestamp$(): Observable<number> {
-    if (this.testing) {
-      return this.requestJpTimestampForTesting$()
-    } else { // this.testing === false.
-      return this.requestJpTimestampForProduction$()
-    }
-  }
-
-
-  private requestJpTimestampForProduction$(): Observable<number> {
     const responseSubject$ = new Subject<AjaxResponse>()
     const ajaxObj: AjaxObject = {
       request: {
@@ -64,16 +52,33 @@ export class AjaxActions {
   }
 
 
-  private requestJpTimestampForTesting$(): Observable<number> {
-    return Observable.of(1).delay(200)
+  completeSubject(): void {
+    this.jpTimestampAjaxSubject$.complete()
   }
 
 }
-
 
 
 interface AjaxObject {
   request: AjaxRequest,
   response?: AjaxResponse,
   responseSubject$: Subject<AjaxResponse>,
+}
+
+
+
+
+/////////////////////////////////////////////////// MOCK
+@injectable()
+export class MockAjaxActions extends AjaxActions {
+  constructor() {
+    super()
+    this.completeSubject()
+  }
+
+
+  requestJpTimestamp$(): Observable<number> {
+    return Observable.of(1).delay(200)
+  }
+
 }

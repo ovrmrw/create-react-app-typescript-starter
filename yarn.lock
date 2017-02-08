@@ -2994,9 +2994,9 @@ inversify-inject-decorators@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/inversify-inject-decorators/-/inversify-inject-decorators-3.0.1.tgz#de46df46ba72642eacac79451ec5c101e4dbcb00"
 
-inversify@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/inversify/-/inversify-3.0.0.tgz#b0e5f7e48f6a3535014b2f12e23385cae3894dab"
+inversify@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/inversify/-/inversify-3.1.0.tgz#820571ddf52e7d8f875a5de15de3468319b86f80"
 
 invert-kv@^1.0.0:
   version "1.0.0"

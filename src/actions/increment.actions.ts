@@ -9,8 +9,8 @@ import { AjaxActions } from './ajax.actions'
 @injectable()
 export class IncrementActions {
   constructor(
-    @inject(ReactiveStoreForAppState) private store: ReactiveStore<AppState>,
-    @inject(AjaxActions) private ajaxActions: AjaxActions,
+    @inject(ReactiveStoreForAppState) public store: ReactiveStore<AppState>,
+    @inject(AjaxActions) public ajaxActions: AjaxActions,
   ) { }
 
 

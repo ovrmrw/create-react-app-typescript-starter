@@ -1,8 +1,5 @@
-import { Container } from 'inversify'
-
-import { container } from '../inversify.config'
-import { AjaxActions } from './ajax.actions'
-import { Testing } from '../symbols'
+import { rootContainer } from '../inversify.config'
+import { AjaxActions, MockAjaxActions } from './ajax.actions'
 
 
 // jest.useFakeTimers()
@@ -13,11 +10,15 @@ describe('AjaxActions test', () => {
 
 
   beforeEach(() => {
-    const container = new Container()
-    container.bind(Testing).toConstantValue(true)
-    container.bind(AjaxActions).toSelf().inSingletonScope()
+    const container = rootContainer.createChild()
+    container.bind(AjaxActions).to(MockAjaxActions)
 
     ajaxActions = container.get(AjaxActions)
+  })
+
+
+  it('ajaxActions instanceof MockAjaxActions', () => {
+    expect(ajaxActions instanceof MockAjaxActions).toBeTruthy()
   })
 
 

@@ -1,9 +1,7 @@
-import { Container } from 'inversify'
-
+import { rootContainer } from '../inversify.config'
 import { ReactiveStore, ReactiveStoreForAppState, AppState } from '../state'
 import { IncrementActions } from './increment.actions'
-import { AjaxActions } from './ajax.actions'
-import { Testing } from '../symbols'
+import { AjaxActions, MockAjaxActions } from './ajax.actions'
 
 
 const initialState: AppState = {
@@ -20,19 +18,23 @@ const initialState: AppState = {
 describe('IncrementActions test', () => {
   let incrementActions: IncrementActions
   let ajaxActions: AjaxActions
-  let store: ReactiveStore<AppState>
+  let store: ReactiveStoreForAppState
 
 
   beforeEach(() => {
-    const container = new Container()
-    container.bind(Testing).toConstantValue(true)
+    const container = rootContainer.createChild()
     container.bind(ReactiveStoreForAppState).toConstantValue(new ReactiveStore(initialState, { testing: true }))
-    container.bind(IncrementActions).toSelf().inSingletonScope()
-    container.bind(AjaxActions).toSelf().inSingletonScope()
+    container.bind(IncrementActions).toSelf()
+    container.bind(AjaxActions).to(MockAjaxActions)
 
-    incrementActions = container.get(IncrementActions)
-    ajaxActions = container.get(AjaxActions)
     store = container.get(ReactiveStoreForAppState)
+    incrementActions = container.get(IncrementActions)
+    ajaxActions = incrementActions.ajaxActions
+  })
+
+
+  it('ajaxActions instanceof MockAjaxActions', () => {
+    expect(ajaxActions instanceof MockAjaxActions).toBeTruthy()
   })
 
 
