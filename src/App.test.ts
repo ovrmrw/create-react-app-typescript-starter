@@ -22,7 +22,7 @@ jest.useFakeTimers()
 test('renders without crashing', () => {
   // const div = document.createElement('div')
   // ReactDOM.render(<App />, div)
-  const wrapper = shallow(React.createElement(App, {}, {}))
+  const wrapper = shallow(React.createElement(App))
   expect(wrapper.length).toBe(1)
 })
 
@@ -40,7 +40,7 @@ describe('App component test', () => {
     testContainer.bind(IncrementActions).toSelf()
     testContainer.bind(AjaxActions).to(MockAjaxActions)
 
-    wrapper = shallow(React.createElement(App, {}, {}))
+    wrapper = shallow(React.createElement(App))
     app = wrapper.instance() as App
   })
 
