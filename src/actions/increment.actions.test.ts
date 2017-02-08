@@ -27,8 +27,8 @@ describe('IncrementActions test', () => {
     testContainer.bind(IncrementActions).toSelf()
     testContainer.bind(AjaxActions).to(MockAjaxActions)
 
-    store = testContainer.get(ReactiveStoreForAppState)
     incrementActions = testContainer.get(IncrementActions)
+    store = incrementActions.store
     ajaxActions = incrementActions.ajaxActions
   })
 
