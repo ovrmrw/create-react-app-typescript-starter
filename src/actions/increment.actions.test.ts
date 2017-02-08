@@ -1,4 +1,4 @@
-import { rootContainer } from '../inversify.config'
+import { testContainer } from '../inversify.config'
 import { ReactiveStore, ReactiveStoreForAppState, AppState } from '../state'
 import { IncrementActions } from './increment.actions'
 import { AjaxActions, MockAjaxActions } from './ajax.actions'
@@ -12,7 +12,7 @@ const initialState: AppState = {
 }
 
 
-// jest.useFakeTimers()
+jest.useFakeTimers()
 
 
 describe('IncrementActions test', () => {
@@ -22,14 +22,19 @@ describe('IncrementActions test', () => {
 
 
   beforeEach(() => {
-    const container = rootContainer.createChild()
-    container.bind(ReactiveStoreForAppState).toConstantValue(new ReactiveStore(initialState, { testing: true }))
-    container.bind(IncrementActions).toSelf()
-    container.bind(AjaxActions).to(MockAjaxActions)
+    testContainer.snapshot()
+    testContainer.bind(ReactiveStoreForAppState).toConstantValue(new ReactiveStore(initialState))
+    testContainer.bind(IncrementActions).toSelf()
+    testContainer.bind(AjaxActions).to(MockAjaxActions)
 
-    store = container.get(ReactiveStoreForAppState)
-    incrementActions = container.get(IncrementActions)
+    store = testContainer.get(ReactiveStoreForAppState)
+    incrementActions = testContainer.get(IncrementActions)
     ajaxActions = incrementActions.ajaxActions
+  })
+
+
+  afterEach(() => {
+    testContainer.restore()
   })
 
 
@@ -39,6 +44,7 @@ describe('IncrementActions test', () => {
 
 
   it('increment', async () => {
+    jest.useRealTimers()
     await incrementActions.incrementCounter()
     const state = await store.getterAsPromise()
     expect(state.increment).toEqual({ counter: 102 })
@@ -47,6 +53,7 @@ describe('IncrementActions test', () => {
 
 
   it('decrement', async () => {
+    jest.useRealTimers()
     await incrementActions.decrementCounter()
     const state = await store.getterAsPromise()
     expect(state.increment).toEqual({ counter: 98 })
@@ -55,6 +62,7 @@ describe('IncrementActions test', () => {
 
 
   it('reset', async () => {
+    jest.useRealTimers()
     await incrementActions.incrementCounter()
     await incrementActions.incrementCounter()
     await incrementActions.resetCounter()
@@ -65,6 +73,7 @@ describe('IncrementActions test', () => {
 
 
   it('requestJpTimestamp$ is called.', async () => {
+    jest.useRealTimers()
     ajaxActions.requestJpTimestamp$ = jest.fn().mockImplementation(() => Promise.resolve())
     await incrementActions.incrementCounter()
     expect(ajaxActions.requestJpTimestamp$).toBeCalled()

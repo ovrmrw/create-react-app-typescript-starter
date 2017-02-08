@@ -11,7 +11,7 @@ import { Actions } from './actions'
 
 export class App extends MyReactPureComponent<{}, AppState> {
   @lazyInject(ReactiveStoreForAppState) store: ReactiveStore<AppState>
-  @lazyInject(Actions) actions: Actions
+  @lazyInject(Actions) public actions: Actions
 
 
   constructor(props) {
@@ -62,7 +62,7 @@ export class App extends MyReactPureComponent<{}, AppState> {
           To get started, edit <code>src/App.tsx</code> and save to reload.
         </p>
         <div>
-          <button onClick={(e) => this.increment(e)}>Increment</button>
+          <button className="increment" onClick={(e) => this.increment(e)}>Increment</button>
           <button onClick={(e) => this.decrement(e)}>Decrement</button>
           <button onClick={(e) => this.reset(e)}>Reset</button>
           <h1>counter: {s.increment.counter}</h1>

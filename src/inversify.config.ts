@@ -7,11 +7,14 @@ import { IncrementActions } from './actions/increment.actions'
 import { AjaxActions } from './actions/ajax.actions'
 
 
-export const rootContainer = new Container(/*{ defaultScope: 'Singleton' }*/)
+export const rootContainer = new Container({ defaultScope: 'Singleton' })
 rootContainer.bind(ReactiveStoreForAppState).toConstantValue(storeInstance)
-rootContainer.bind(Actions).toSelf()// .inSingletonScope()
-rootContainer.bind(IncrementActions).toSelf()// .inSingletonScope()
-rootContainer.bind(AjaxActions).toSelf()// .inSingletonScope()
+rootContainer.bind(Actions).toSelf()
+rootContainer.bind(IncrementActions).toSelf()
+rootContainer.bind(AjaxActions).toSelf()
 
 
-export const { lazyInject, lazyMultiInject } = getDecorators(rootContainer)
+export const testContainer = rootContainer.createChild()
+
+const finalContainer = testContainer.createChild()
+export const { lazyInject, lazyMultiInject } = getDecorators(finalContainer)

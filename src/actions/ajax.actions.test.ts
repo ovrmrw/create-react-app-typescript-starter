@@ -1,8 +1,8 @@
-import { rootContainer } from '../inversify.config'
+import { testContainer } from '../inversify.config'
 import { AjaxActions, MockAjaxActions } from './ajax.actions'
 
 
-// jest.useFakeTimers()
+jest.useFakeTimers()
 
 
 describe('AjaxActions test', () => {
@@ -10,10 +10,15 @@ describe('AjaxActions test', () => {
 
 
   beforeEach(() => {
-    const container = rootContainer.createChild()
-    container.bind(AjaxActions).to(MockAjaxActions)
+    testContainer.snapshot()
+    testContainer.bind(AjaxActions).to(MockAjaxActions)
 
-    ajaxActions = container.get(AjaxActions)
+    ajaxActions = testContainer.get(AjaxActions)
+  })
+
+
+  afterEach(() => {
+    testContainer.restore()
   })
 
 
@@ -23,6 +28,7 @@ describe('AjaxActions test', () => {
 
 
   it('requestJpTimestamp$', (done) => {
+    jest.useRealTimers()
     let value: number | undefined
     ajaxActions.requestJpTimestamp$()
       .subscribe({
