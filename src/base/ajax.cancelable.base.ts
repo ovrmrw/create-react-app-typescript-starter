@@ -1,55 +1,89 @@
-import { injectable } from 'inversify'
 import { Observable } from 'rxjs/Observable'
 import { Subject } from 'rxjs/Subject'
-import { AjaxResponse, AjaxRequest } from 'rxjs/observable/dom/ajaxObservable'
+import { AjaxResponse, AjaxRequest } from 'rxjs/observable/dom/AjaxObservable'
 import 'rxjs/add/observable/dom/ajax'
 import 'rxjs/add/operator/take'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/switchMap'
+import 'rxjs/add/operator/takeUntil'
+
+export { AjaxResponse, AjaxRequest }
 
 
 
-@injectable()
 export abstract class AjaxCancelableBase {
-  private ajaxSubject$ = new Subject<AjaxObject>()
+  private subject$ = new Subject<AjaxObject>()
+  private canceller$ = new Subject<void>()
 
 
   constructor() {
-    this.ajaxSubject$
+    this.subject$
       .switchMap(ajaxObj => {
         return Observable.ajax(ajaxObj.request)
+          .timeoutWith(ajaxObj.timeout, Observable.of(null))
           .take(1)
+          .takeUntil(this.canceller$)
           .map(data => {
-            ajaxObj.response = data
+            if (data) {
+              ajaxObj.response = data
+            }
             return ajaxObj
           })
+
       })
-      .subscribe(ajaxObj => {
-        if (ajaxObj.response && ajaxObj.response.status === 200) {
-          ajaxObj.responseSubject$.next(ajaxObj.response)
+      .subscribe({
+        next: ajaxObj => {
+          if (ajaxObj.response) {
+            ajaxObj.responseSubject$.next(ajaxObj.response)
+          } else {
+            // ajaxObj.responseSubject$.error('ERROR: ajaxObj.response must be truthy.')
+            console.error('ERROR: AjaxResponse is null.')
+            ajaxObj.responseSubject$.complete()
+          }
+        },
+        error: err => { throw err },
+      })
+  }
+
+
+  requestAjax$(request: AjaxRequest, timeout: number = 5000): Observable<AjaxResponse> {
+    const responseSubject$ = new Subject<AjaxResponse | null>()
+    const ajaxObj: AjaxObject = {
+      request,
+      response: null,
+      responseSubject$,
+      timeout,
+    }
+
+    this.subject$.next(ajaxObj)
+
+    return responseSubject$
+      .timeoutWith(timeout, Observable.of(null))
+      .take(1)
+      .filter(data => {
+        if (data) {
+          return true
         } else {
-          ajaxObj.responseSubject$.complete()
+          console.error('ERROR: AjaxResponse is null.')
+          return false
         }
       })
   }
 
 
-  requestAjax$(request: AjaxRequest): Observable<AjaxResponse> {
-    const responseSubject$ = new Subject<AjaxResponse>()
-    const ajaxObj: AjaxObject = {
-      request,
-      responseSubject$,
-    }
-
-    this.ajaxSubject$.next(ajaxObj)
-
-    return responseSubject$
-      .take(1)
+  requestAjaxAsPromise(request: AjaxRequest): Promise<AjaxResponse> {
+    return this.requestAjax$(request).toPromise()
   }
 
 
-  completeSubject(): void {
-    this.ajaxSubject$.complete()
+  cancelAjax(): void {
+    this.canceller$.next()
+  }
+
+
+  dispose(): void {
+    this.subject$.complete()
+    this.canceller$.complete()
   }
 
 }
@@ -58,6 +92,7 @@ export abstract class AjaxCancelableBase {
 
 interface AjaxObject {
   request: AjaxRequest,
-  response?: AjaxResponse,
+  response: AjaxResponse | null,
   responseSubject$: Subject<AjaxResponse>,
+  timeout: number,
 }

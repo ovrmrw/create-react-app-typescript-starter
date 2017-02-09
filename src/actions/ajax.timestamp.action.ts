@@ -1,12 +1,12 @@
 import { injectable } from 'inversify'
 import { Observable } from 'rxjs/Observable'
 import { Subject } from 'rxjs/Subject'
-import { AjaxResponse, AjaxRequest } from 'rxjs/observable/dom/ajaxObservable'
 import 'rxjs/add/observable/of'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/delay'
 
-import { AjaxCancelableBase } from '../base/ajax.cancelable.base'
+import { AjaxCancelableBase, AjaxRequest, AjaxResponse } from '../base/ajax.cancelable.base'
+
 
 
 @injectable()
@@ -18,6 +18,7 @@ export class AjaxJpTimestampAction extends AjaxCancelableBase {
 
   requestJpTimestamp$(): Observable<number> {
     const request: AjaxRequest = {
+      method: 'GET',
       url: 'https://ntp-a1.nict.go.jp/cgi-bin/json',
       crossDomain: true,
     }
@@ -36,7 +37,7 @@ export class AjaxJpTimestampAction extends AjaxCancelableBase {
 export class MockAjaxJpTimestampAction extends AjaxJpTimestampAction {
   constructor() {
     super()
-    this.completeSubject()
+    this.cancelAjax()
   }
 
 
