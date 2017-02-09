@@ -1,7 +1,6 @@
 import { testContainer } from '../inversify.config'
 import { ReactiveStore, ReactiveStoreForAppState, AppState } from '../state'
-import { IncrementActions } from './increment.actions'
-import { AjaxActions, MockAjaxActions } from './ajax.actions'
+import { IncrementActions, AjaxJpTimestampAction, MockAjaxJpTimestampAction } from '../actions'
 
 
 const initialState: AppState = {
@@ -17,19 +16,18 @@ jest.useFakeTimers()
 
 describe('IncrementActions test', () => {
   let incrementActions: IncrementActions
-  let ajaxActions: AjaxActions
+  let ajaxJpTimestampAction: AjaxJpTimestampAction
   let store: ReactiveStoreForAppState
 
 
   beforeEach(() => {
     testContainer.snapshot()
     testContainer.bind(ReactiveStoreForAppState).toConstantValue(new ReactiveStore(initialState))
-    testContainer.bind(IncrementActions).toSelf()
-    testContainer.bind(AjaxActions).to(MockAjaxActions)
+    testContainer.bind(AjaxJpTimestampAction).to(MockAjaxJpTimestampAction)
 
     incrementActions = testContainer.get(IncrementActions)
     store = incrementActions.store
-    ajaxActions = incrementActions.ajaxActions
+    ajaxJpTimestampAction = incrementActions.ajaxJpTimestampAction
   })
 
 
@@ -38,8 +36,8 @@ describe('IncrementActions test', () => {
   })
 
 
-  it('ajaxActions instanceof MockAjaxActions', () => {
-    expect(ajaxActions instanceof MockAjaxActions).toBeTruthy()
+  it('ajaxJpTimestampAction instanceof MockAjaxJpTimestampAction', () => {
+    expect(ajaxJpTimestampAction instanceof MockAjaxJpTimestampAction).toBeTruthy()
   })
 
 
@@ -74,9 +72,9 @@ describe('IncrementActions test', () => {
 
   it('requestJpTimestamp$ is called.', async () => {
     jest.useRealTimers()
-    ajaxActions.requestJpTimestamp$ = jest.fn().mockImplementation(() => Promise.resolve())
+    ajaxJpTimestampAction.requestJpTimestamp$ = jest.fn().mockImplementation(() => Promise.resolve())
     await incrementActions.incrementCounter()
-    expect(ajaxActions.requestJpTimestamp$).toBeCalled()
+    expect(ajaxJpTimestampAction.requestJpTimestamp$).toBeCalled()
   })
 
 })

@@ -2,12 +2,13 @@ import { injectable, inject } from 'inversify'
 
 import { IncrementActions } from './increment.actions'
 export * from './increment.actions'
-export * from './ajax.actions'
+export * from './ajax.timestamp.action'
+
 
 
 @injectable()
 export class Actions {
   constructor(
-    public increment: IncrementActions
+    @inject(IncrementActions) public increment: IncrementActions
   ) { }
 }

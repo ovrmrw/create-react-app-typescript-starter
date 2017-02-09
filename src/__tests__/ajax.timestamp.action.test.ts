@@ -1,19 +1,19 @@
 import { testContainer } from '../inversify.config'
-import { AjaxActions, MockAjaxActions } from './ajax.actions'
+import { AjaxJpTimestampAction, MockAjaxJpTimestampAction } from '../actions'
 
 
 jest.useFakeTimers()
 
 
 describe('AjaxActions test', () => {
-  let ajaxActions: AjaxActions
+  let ajaxJpTimestampAction: AjaxJpTimestampAction
 
 
   beforeEach(() => {
     testContainer.snapshot()
-    testContainer.bind(AjaxActions).to(MockAjaxActions)
+    testContainer.bind(AjaxJpTimestampAction).to(MockAjaxJpTimestampAction)
 
-    ajaxActions = testContainer.get(AjaxActions)
+    ajaxJpTimestampAction = testContainer.get(AjaxJpTimestampAction)
   })
 
 
@@ -22,15 +22,15 @@ describe('AjaxActions test', () => {
   })
 
 
-  it('ajaxActions instanceof MockAjaxActions', () => {
-    expect(ajaxActions instanceof MockAjaxActions).toBeTruthy()
+  it('ajaxJpTimestampAction instanceof MockAjaxJpTimestampAction', () => {
+    expect(ajaxJpTimestampAction instanceof MockAjaxJpTimestampAction).toBeTruthy()
   })
 
 
   it('requestJpTimestamp$', (done) => {
     jest.useRealTimers()
     let value: number | undefined
-    ajaxActions.requestJpTimestamp$()
+    ajaxJpTimestampAction.requestJpTimestamp$()
       .subscribe({
         next: timestamp => value = timestamp,
         complete: () => {

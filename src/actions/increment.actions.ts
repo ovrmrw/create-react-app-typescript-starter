@@ -1,8 +1,10 @@
 import { injectable, inject } from 'inversify'
 import { Observable } from 'rxjs/Observable'
+import 'rxjs/add/observable/of'
+import 'rxjs/add/operator/delay'
 
 import { ReactiveStore, ReactiveStoreForAppState, KEY, AppState, IncrementState } from '../state'
-import { AjaxActions } from './ajax.actions'
+import { AjaxJpTimestampAction } from './ajax.timestamp.action'
 
 
 
@@ -10,27 +12,27 @@ import { AjaxActions } from './ajax.actions'
 export class IncrementActions {
   constructor(
     @inject(ReactiveStoreForAppState) public store: ReactiveStore<AppState>,
-    @inject(AjaxActions) public ajaxActions: AjaxActions,
+    @inject(AjaxJpTimestampAction) public ajaxJpTimestampAction: AjaxJpTimestampAction,
   ) { }
 
 
   incrementCounter(): Promise<void> {
     return this.store.setter(KEY.increment, (p) => ({ counter: p.counter + 1 }))
       .then(() => this.store.setter(KEY.increment, Observable.of(incrementCallback).delay(500)))
-      .then(() => this.store.setter(KEY.lastUpdated, this.ajaxActions.requestJpTimestamp$()))
+      .then(() => this.store.setter(KEY.lastUpdated, this.ajaxJpTimestampAction.requestJpTimestamp$()))
   }
 
 
   decrementCounter(): Promise<void> {
     return this.store.setter(KEY.increment, (p) => ({ counter: p.counter - 1 }))
       .then(() => this.store.setter(KEY.increment, Observable.of(decrementCallback).delay(500)))
-      .then(() => this.store.setter(KEY.lastUpdated, this.ajaxActions.requestJpTimestamp$()))
+      .then(() => this.store.setter(KEY.lastUpdated, this.ajaxJpTimestampAction.requestJpTimestamp$()))
   }
 
 
   resetCounter(): Promise<void> {
     return this.store.setter(KEY.increment, this.store.initialState.increment)
-      .then(() => this.store.setter(KEY.lastUpdated, this.ajaxActions.requestJpTimestamp$()))
+      .then(() => this.store.setter(KEY.lastUpdated, this.ajaxJpTimestampAction.requestJpTimestamp$()))
   }
 
 }

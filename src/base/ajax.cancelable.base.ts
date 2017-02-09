@@ -2,18 +2,20 @@ import { injectable } from 'inversify'
 import { Observable } from 'rxjs/Observable'
 import { Subject } from 'rxjs/Subject'
 import { AjaxResponse, AjaxRequest } from 'rxjs/observable/dom/ajaxObservable'
-
-import { lazyInject } from '../inversify.config'
+import 'rxjs/add/observable/dom/ajax'
+import 'rxjs/add/operator/take'
+import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/switchMap'
 
 
 
 @injectable()
-export class AjaxActions {
-  private jpTimestampAjaxSubject$ = new Subject<AjaxObject>()
+export abstract class AjaxCancelableBase {
+  private ajaxSubject$ = new Subject<AjaxObject>()
 
 
   constructor() {
-    this.jpTimestampAjaxSubject$
+    this.ajaxSubject$
       .switchMap(ajaxObj => {
         return Observable.ajax(ajaxObj.request)
           .take(1)
@@ -32,53 +34,30 @@ export class AjaxActions {
   }
 
 
-  requestJpTimestamp$(): Observable<number> {
+  requestAjax$(request: AjaxRequest): Observable<AjaxResponse> {
     const responseSubject$ = new Subject<AjaxResponse>()
     const ajaxObj: AjaxObject = {
-      request: {
-        url: 'https://ntp-a1.nict.go.jp/cgi-bin/json',
-        crossDomain: true,
-      },
+      request,
       responseSubject$,
     }
 
-    this.jpTimestampAjaxSubject$.next(ajaxObj)
+    this.ajaxSubject$.next(ajaxObj)
 
     return responseSubject$
       .take(1)
-      .map(data => data.response)
-      .map(res => res.st as number)
-      .map(value => value * 1000)
   }
 
 
   completeSubject(): void {
-    this.jpTimestampAjaxSubject$.complete()
+    this.ajaxSubject$.complete()
   }
 
 }
+
 
 
 interface AjaxObject {
   request: AjaxRequest,
   response?: AjaxResponse,
   responseSubject$: Subject<AjaxResponse>,
-}
-
-
-
-
-/////////////////////////////////////////////////// MOCK
-@injectable()
-export class MockAjaxActions extends AjaxActions {
-  constructor() {
-    super()
-    this.completeSubject()
-  }
-
-
-  requestJpTimestamp$(): Observable<number> {
-    return Observable.of(1).delay(200)
-  }
-
 }
