@@ -29,7 +29,6 @@ export abstract class AjaxCancelableBase {
             }
             return ajaxObj
           })
-
       })
       .subscribe({
         next: ajaxObj => {
