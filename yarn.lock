@@ -5278,6 +5278,12 @@ rx-lite@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/rx-lite/-/rx-lite-3.1.2.tgz#19ce502ca572665f3b647b10939f97fd1615f102"
 
+rxjs-ajax-cancelable@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/rxjs-ajax-cancelable/-/rxjs-ajax-cancelable-0.0.2.tgz#60605fbdac9d31f24f449cc23bdd9f756a27b729"
+  dependencies:
+    rxjs "^5.1.0"
+
 rxjs@^5.0.3, rxjs@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.1.0.tgz#0aa9018b7f440b505fa42bd742b6738be550e720"
