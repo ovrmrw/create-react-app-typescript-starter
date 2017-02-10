@@ -8,8 +8,8 @@ import 'rxjs/add/operator/takeUntil'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/filter'
 import 'rxjs/add/operator/switchMap'
-import 'rxjs/add/operator/timeout'
-import 'rxjs/add/operator/timeoutWith'
+// import 'rxjs/add/operator/timeout'
+// import 'rxjs/add/operator/timeoutWith'
 import 'rxjs/add/operator/retry'
 import 'rxjs/add/operator/catch'
 import 'rxjs/add/operator/toPromise'
@@ -29,8 +29,7 @@ export class AjaxCancelable {
     this.subject$
       .switchMap(ajaxObj => {
         return Observable.ajax(ajaxObj.request)
-          .timeout(ajaxObj.timeout)
-          .retry(3)
+          .retry(2)
           .catch((err, caught) => {
             if (err) {
               console.error(err)
@@ -49,14 +48,7 @@ export class AjaxCancelable {
           })
       })
       .subscribe({
-        next: ajaxObj => {
-          if (ajaxObj.response) {
-            ajaxObj.responseSubject$.next(ajaxObj.response)
-          } else {
-            console.error('ERROR: AjaxResponse is null.')
-            ajaxObj.responseSubject$.complete()
-          }
-        },
+        next: ajaxObj => ajaxObj.responseSubject$.next(ajaxObj.response),
         error: err => { throw err },
       })
   }
@@ -68,19 +60,18 @@ export class AjaxCancelable {
     }
 
     const _request: AjaxRequest = Object.assign({}, this.request, request) // merge request objects.
-    const timeout = _request.timeout || 1000 * 10
+    _request.timeout = _request.timeout || 1000 * 10 // (default) timeout after 10s later.
+
     const responseSubject$ = new Subject<AjaxResponse | null>()
     const ajaxObj: AjaxObject = {
       request: _request,
       response: null,
       responseSubject$,
-      timeout,
     }
 
     this.subject$.next(ajaxObj)
 
     return responseSubject$
-      .timeoutWith(timeout, Observable.of(null))
       .take(1)
       .filter(data => {
         if (data) { // "data" is nullable.
@@ -115,6 +106,5 @@ export class AjaxCancelable {
 interface AjaxObject {
   request: AjaxRequest,
   response: AjaxResponse | null,
-  responseSubject$: Subject<AjaxResponse>,
-  timeout: number,
+  responseSubject$: Subject<AjaxResponse | null>,
 }

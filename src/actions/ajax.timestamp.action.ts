@@ -19,6 +19,7 @@ export class AjaxJpTimestampAction {
       method: 'GET',
       url: 'https://ntp-a1.nict.go.jp/cgi-bin/json',
       crossDomain: true,
+      timeout: 34,
     }
     return this.jpTimestampCancelable.requestAjax(request)
       .map(data => data.response)
