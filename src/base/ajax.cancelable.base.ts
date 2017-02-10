@@ -101,7 +101,7 @@ export class AjaxCancelable {
         }
       })
 
-    const subscription = observable
+    observable
       .subscribe({
         complete: () => {
           this.disposeTimer = setTimeout(() => {

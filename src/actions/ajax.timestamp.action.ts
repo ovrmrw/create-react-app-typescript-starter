@@ -35,14 +35,7 @@ export class AjaxJpTimestampAction {
 /////////////////////////////////////////////////// MOCK
 @injectable()
 export class MockAjaxJpTimestampAction extends AjaxJpTimestampAction {
-  constructor() {
-    super()
-    this.jpTimestampCancelable.unsubscribeSubjects()
-  }
-
-
   requestJpTimestamp$(): Observable<number> {
     return Observable.of(1).delay(200)
   }
-
 }
