@@ -15,13 +15,13 @@ export class AjaxJpTimestampAction {
 
 
   requestJpTimestamp$(): Observable<number> {
-    const request: AjaxRequest = {
-      method: 'GET',
-      url: 'https://ntp-a1.nict.go.jp/cgi-bin/json',
-      crossDomain: true,
-      timeout: 34,
-    }
-    return this.jpTimestampCancelable.requestAjax(request)
+    return this.jpTimestampCancelable
+      .requestAjax({
+        method: 'GET',
+        url: 'https://ntp-a1.nict.go.jp/cgi-bin/json',
+        crossDomain: true,
+        timeout: 1000,
+      })
       .map(data => data.response)
       .map(res => res.st as number)
       .map(value => value * 1000)
