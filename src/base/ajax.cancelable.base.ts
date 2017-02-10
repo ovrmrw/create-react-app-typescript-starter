@@ -126,8 +126,12 @@ export class AjaxCancelable {
 
 
   unsubscribeSubjects(): void {
-    this.subject$.unsubscribe()
-    this.canceller$.unsubscribe()
+    if (this.subject$) {
+      this.subject$.unsubscribe()
+    }
+    if (this.canceller$) {
+      this.canceller$.unsubscribe()
+    }
   }
 
 }
