@@ -2,7 +2,7 @@ import { ContainerModule, injectable, inject, decorate } from 'inversify'
 
 import { IncrementActions } from './increment.actions'
 import { AjaxJpTimestampAction } from './ajax.timestamp.action'
-import { AjaxCancelableBase } from '../base/ajax.cancelable.base'
+import { AjaxCancelable } from '../base/ajax.cancelable.base'
 export * from './increment.actions'
 export * from './ajax.timestamp.action'
 
@@ -16,7 +16,7 @@ export class Actions {
 
 
 export const actionsContainerModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  decorate(injectable(), AjaxCancelableBase)
+  decorate(injectable(), AjaxCancelable)
   bind(Actions).toSelf()
   bind(IncrementActions).toSelf()
   bind(AjaxJpTimestampAction).toSelf()

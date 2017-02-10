@@ -13,20 +13,27 @@ export { AjaxResponse, AjaxRequest }
 
 
 
-export abstract class AjaxCancelableBase {
+export class AjaxCancelable {
   private subject$ = new Subject<AjaxObject>()
   private canceller$ = new Subject<void>()
 
 
-  constructor() {
+  constructor(
+    private request?: AjaxRequest,
+  ) {
     this.subject$
       .switchMap(ajaxObj => {
         return Observable.ajax(ajaxObj.request)
-          .timeoutWith(ajaxObj.timeout, Observable.of(null))
+          .timeout(ajaxObj.timeout)
+          .retry(3)
+          .catch(err => {
+            console.error(err)
+            return Observable.of(null)
+          })
           .take(1)
           .takeUntil(this.canceller$)
           .map(data => {
-            if (data) {
+            if (data) { // "data" is nullable.
               ajaxObj.response = data
             }
             return ajaxObj
@@ -37,7 +44,6 @@ export abstract class AjaxCancelableBase {
           if (ajaxObj.response) {
             ajaxObj.responseSubject$.next(ajaxObj.response)
           } else {
-            // ajaxObj.responseSubject$.error('ERROR: ajaxObj.response must be truthy.')
             console.error('ERROR: AjaxResponse is null.')
             ajaxObj.responseSubject$.complete()
           }
@@ -47,10 +53,16 @@ export abstract class AjaxCancelableBase {
   }
 
 
-  requestAjax$(request: AjaxRequest, timeout: number = 5000): Observable<AjaxResponse> {
+  requestAjax(request?: AjaxRequest): Observable<AjaxResponse> {
+    if (!this.request && !request) {
+      throw new Error('ERROR: AjaxRequest is undefined.')
+    }
+
+    const _request: AjaxRequest = Object.assign({}, this.request, request) // merge request objects.
+    const timeout = _request.timeout || 1000 * 10
     const responseSubject$ = new Subject<AjaxResponse | null>()
     const ajaxObj: AjaxObject = {
-      request,
+      request: _request,
       response: null,
       responseSubject$,
       timeout,
@@ -72,8 +84,8 @@ export abstract class AjaxCancelableBase {
   }
 
 
-  requestAjaxAsPromise(request: AjaxRequest): Promise<AjaxResponse> {
-    return this.requestAjax$(request).toPromise()
+  requestAjaxAsPromise(request?: AjaxRequest): Promise<AjaxResponse> {
+    return this.requestAjax(request).toPromise()
   }
 
 
@@ -82,7 +94,7 @@ export abstract class AjaxCancelableBase {
   }
 
 
-  dispose(): void {
+  disposeSubjects(): void {
     this.subject$.complete()
     this.canceller$.complete()
   }
