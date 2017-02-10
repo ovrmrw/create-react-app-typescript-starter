@@ -14,8 +14,11 @@ import 'rxjs/add/operator/retry'
 import 'rxjs/add/operator/catch'
 import 'rxjs/add/operator/toPromise'
 
-export { AjaxResponse, AjaxRequest }
+export { AjaxResponse }
 
+
+const DEFAULT_TIMEOUT = 1000 * 10
+const DEFAULT_RETRY = 2
 
 
 export class AjaxCancelable {
@@ -24,12 +27,12 @@ export class AjaxCancelable {
 
 
   constructor(
-    private request?: AjaxRequest,
+    private request?: AjaxRequestPlus,
   ) {
     this.subject$
       .switchMap(ajaxObj => {
         return Observable.ajax(ajaxObj.request)
-          .retry(2)
+          .retry(ajaxObj.retry)
           .catch((err, caught) => {
             if (err) {
               console.error(err)
@@ -54,19 +57,20 @@ export class AjaxCancelable {
   }
 
 
-  requestAjax(request?: AjaxRequest): Observable<AjaxResponse> {
+  requestAjax(request?: AjaxRequestPlus): Observable<AjaxResponse> {
     if (!this.request && !request) {
       throw new Error('ERROR: AjaxRequest is undefined.')
     }
 
-    const _request: AjaxRequest = Object.assign({}, this.request, request) // merge request objects.
-    _request.timeout = _request.timeout || 1000 * 10 // (default) timeout after 10s later.
+    const _request: AjaxRequestPlus = Object.assign({}, this.request, request) // merge request objects.
+    _request.timeout = _request.timeout || DEFAULT_TIMEOUT
 
     const responseSubject$ = new Subject<AjaxResponse | null>()
     const ajaxObj: AjaxObject = {
       request: _request,
       response: null,
       responseSubject$,
+      retry: _request.retry || DEFAULT_RETRY
     }
 
     this.subject$.next(ajaxObj)
@@ -84,7 +88,7 @@ export class AjaxCancelable {
   }
 
 
-  requestAjaxAsPromise(request?: AjaxRequest): Promise<AjaxResponse> {
+  requestAjaxAsPromise(request?: AjaxRequestPlus): Promise<AjaxResponse> {
     return this.requestAjax(request).toPromise()
   }
 
@@ -103,8 +107,14 @@ export class AjaxCancelable {
 
 
 
+export type AjaxRequestPlus = AjaxRequest & {
+  retry?: number
+}
+
+
 interface AjaxObject {
   request: AjaxRequest,
   response: AjaxResponse | null,
   responseSubject$: Subject<AjaxResponse | null>,
+  retry: number,
 }

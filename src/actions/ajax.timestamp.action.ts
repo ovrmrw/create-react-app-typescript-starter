@@ -5,7 +5,7 @@ import 'rxjs/add/observable/of'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/delay'
 
-import { AjaxCancelable, AjaxRequest, AjaxResponse } from '../base/ajax.cancelable.base'
+import { AjaxCancelable } from '../base/ajax.cancelable.base'
 
 
 
@@ -21,6 +21,7 @@ export class AjaxJpTimestampAction {
         url: 'https://ntp-a1.nict.go.jp/cgi-bin/json',
         crossDomain: true,
         timeout: 1000,
+        retry: 2,
       })
       .map(data => data.response)
       .map(res => res.st as number)
