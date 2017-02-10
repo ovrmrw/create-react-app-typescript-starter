@@ -37,7 +37,7 @@ export class AjaxJpTimestampAction {
 export class MockAjaxJpTimestampAction extends AjaxJpTimestampAction {
   constructor() {
     super()
-    this.jpTimestampCancelable.disposeSubjects()
+    this.jpTimestampCancelable.unsubscribeSubjects()
   }
 
 

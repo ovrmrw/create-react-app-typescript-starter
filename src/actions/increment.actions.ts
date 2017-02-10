@@ -19,7 +19,7 @@ export class IncrementActions {
   incrementCounter(): Promise<void> {
     return this.store.setter(KEY.increment, (p) => ({ counter: p.counter + 1 }))
       .then(() => this.store.setter(KEY.increment, Observable.of(incrementCallback).delay(500)))
-      .then(() => this.store.setter(KEY.lastUpdated, this.ajaxJpTimestampAction.requestJpTimestamp$()))
+      .then(() => this.store.setter(KEY.lastUpdated, this.ajaxJpTimestampAction.requestJpTimestamp$().toPromise()))
   }
 
 

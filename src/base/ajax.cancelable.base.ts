@@ -19,41 +19,55 @@ export { AjaxResponse }
 
 const DEFAULT_TIMEOUT = 1000 * 10
 const DEFAULT_RETRY = 2
+const DEFAULT_DISPOSE_TIME = 1000 * 30
 
 
 export class AjaxCancelable {
-  private subject$ = new Subject<AjaxObject>()
-  private canceller$ = new Subject<void>()
+  private disposeTimer: NodeJS.Timer
+  private subject$: Subject<AjaxObject>
+  private canceller$: Subject<void>
 
 
   constructor(
     private request?: AjaxRequestPlus,
-  ) {
-    this.subject$
-      .switchMap(ajaxObj => {
-        return Observable.ajax(ajaxObj.request)
-          .retry(ajaxObj.retry)
-          .catch((err, caught) => {
-            if (err) {
-              console.error(err)
-              return Observable.of(null)
-            } else {
-              return caught
-            }
-          })
-          .take(1)
-          .takeUntil(this.canceller$)
-          .map(data => {
-            if (data) { // "data" is nullable.
-              ajaxObj.response = data
-            }
-            return ajaxObj
-          })
-      })
-      .subscribe({
-        next: ajaxObj => ajaxObj.responseSubject$.next(ajaxObj.response),
-        error: err => { throw err },
-      })
+  ) { }
+
+
+  private invokeSubjects(): void {
+    clearInterval(this.disposeTimer)
+
+    if (!this.canceller$ || this.canceller$.isStopped) {
+      this.canceller$ = new Subject<void>()
+    }
+
+    if (!this.subject$ || this.subject$.isStopped) {
+      this.subject$ = new Subject<AjaxObject>()
+      this.subject$
+        .switchMap(ajaxObj => {
+          return Observable.ajax(ajaxObj.request)
+            .retry(ajaxObj.retry)
+            .catch((err, caught) => {
+              if (err) {
+                console.error(err)
+                return Observable.of(null)
+              } else {
+                return caught
+              }
+            })
+            .take(1)
+            .takeUntil(this.canceller$)
+            .map(data => {
+              if (data) { // "data" is nullable.
+                ajaxObj.response = data
+              }
+              return ajaxObj
+            })
+        })
+        .subscribe({
+          next: ajaxObj => ajaxObj.responseSubject$.next(ajaxObj.response),
+          error: err => { throw err },
+        })
+    }
   }
 
 
@@ -61,6 +75,8 @@ export class AjaxCancelable {
     if (!this.request && !request) {
       throw new Error('ERROR: AjaxRequest is undefined.')
     }
+
+    this.invokeSubjects()
 
     const _request: AjaxRequestPlus = Object.assign({}, this.request, request) // merge request objects.
     _request.timeout = _request.timeout || DEFAULT_TIMEOUT
@@ -75,7 +91,7 @@ export class AjaxCancelable {
 
     this.subject$.next(ajaxObj)
 
-    return responseSubject$
+    const observable = responseSubject$
       .take(1)
       .filter(data => {
         if (data) { // "data" is nullable.
@@ -85,6 +101,23 @@ export class AjaxCancelable {
           return false
         }
       })
+
+    const subscription = observable
+      .subscribe(
+      // {
+      //   complete: () => console.log('complete')
+      // }
+      )
+
+    this.disposeTimer = setInterval(() => {
+      if (subscription.closed) {
+        this.unsubscribeSubjects()
+        clearInterval(this.disposeTimer)
+        // console.log('Ajax subjects are unsubscribed.')
+      }
+    }, DEFAULT_DISPOSE_TIME)
+
+    return observable
   }
 
 
@@ -98,9 +131,9 @@ export class AjaxCancelable {
   }
 
 
-  disposeSubjects(): void {
-    this.subject$.complete()
-    this.canceller$.complete()
+  unsubscribeSubjects(): void {
+    this.subject$.unsubscribe()
+    this.canceller$.unsubscribe()
   }
 
 }
