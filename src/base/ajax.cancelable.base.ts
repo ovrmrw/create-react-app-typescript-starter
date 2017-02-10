@@ -1,13 +1,18 @@
 import { Observable } from 'rxjs/Observable'
 import { Subject } from 'rxjs/Subject'
 import { AjaxResponse, AjaxRequest } from 'rxjs/observable/dom/AjaxObservable'
+import 'rxjs/add/observable/of'
 import 'rxjs/add/observable/dom/ajax'
 import 'rxjs/add/operator/take'
+import 'rxjs/add/operator/takeUntil'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/filter'
 import 'rxjs/add/operator/switchMap'
-import 'rxjs/add/operator/takeUntil'
+import 'rxjs/add/operator/timeout'
 import 'rxjs/add/operator/timeoutWith'
+import 'rxjs/add/operator/retry'
+import 'rxjs/add/operator/catch'
+import 'rxjs/add/operator/toPromise'
 
 export { AjaxResponse, AjaxRequest }
 
@@ -26,9 +31,13 @@ export class AjaxCancelable {
         return Observable.ajax(ajaxObj.request)
           .timeout(ajaxObj.timeout)
           .retry(3)
-          .catch(err => {
-            console.error(err)
-            return Observable.of(null)
+          .catch((err, caught) => {
+            if (err) {
+              console.error(err)
+              return Observable.of(null)
+            } else {
+              return caught
+            }
           })
           .take(1)
           .takeUntil(this.canceller$)
@@ -74,7 +83,7 @@ export class AjaxCancelable {
       .timeoutWith(timeout, Observable.of(null))
       .take(1)
       .filter(data => {
-        if (data) {
+        if (data) { // "data" is nullable.
           return true
         } else {
           console.error('ERROR: AjaxResponse is null.')
