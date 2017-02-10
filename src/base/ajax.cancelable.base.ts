@@ -19,7 +19,7 @@ export { AjaxResponse }
 
 const DEFAULT_TIMEOUT = 1000 * 10
 const DEFAULT_RETRY = 2
-const DEFAULT_DISPOSE_TIME = 1000 * 30
+const DEFAULT_DISPOSE_TIME = 1000 * 1
 
 
 export class AjaxCancelable {
@@ -34,8 +34,6 @@ export class AjaxCancelable {
 
 
   private invokeSubjects(): void {
-    clearInterval(this.disposeTimer)
-
     if (!this.canceller$ || this.canceller$.isStopped) {
       this.canceller$ = new Subject<void>()
     }
@@ -76,6 +74,7 @@ export class AjaxCancelable {
       throw new Error('ERROR: AjaxRequest is undefined.')
     }
 
+    clearTimeout(this.disposeTimer)
     this.invokeSubjects()
 
     const _request: AjaxRequestPlus = Object.assign({}, this.request, request) // merge request objects.
@@ -103,19 +102,14 @@ export class AjaxCancelable {
       })
 
     const subscription = observable
-      .subscribe(
-      // {
-      //   complete: () => console.log('complete')
-      // }
-      )
-
-    this.disposeTimer = setInterval(() => {
-      if (subscription.closed) {
-        this.unsubscribeSubjects()
-        clearInterval(this.disposeTimer)
-        // console.log('Ajax subjects are unsubscribed.')
-      }
-    }, DEFAULT_DISPOSE_TIME)
+      .subscribe({
+        complete: () => {
+          this.disposeTimer = setTimeout(() => {
+            this.unsubscribeSubjects()
+            console.log('Ajax subjects are unsubscribed.')
+          }, DEFAULT_DISPOSE_TIME)
+        }
+      })
 
     return observable
   }

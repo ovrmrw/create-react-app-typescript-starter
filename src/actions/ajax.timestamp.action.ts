@@ -20,7 +20,7 @@ export class AjaxJpTimestampAction {
         method: 'GET',
         url: 'https://ntp-a1.nict.go.jp/cgi-bin/json',
         crossDomain: true,
-        timeout: 1000,
+        timeout: 34,
         retry: 2,
       })
       .map(data => data.response)
