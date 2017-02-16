@@ -159,7 +159,7 @@ module.exports = {
       { // @ovrmrw
         test: /\.(ts|tsx)$/,
         include: paths.appSrc,
-        loader: 'light-ts-loader',
+        loader: 'awesome-typescript-loader',
       },
     ]
   },
