@@ -16,13 +16,11 @@ export class App extends MyReactPureComponent<{}, AppState> {
 
   constructor(props) {
     super(props)
-    this.state = { ...this.store.initialState }
+    this.state = { ...this.store.currentState }
   }
 
 
   componentWillMount() {
-    this.store.getter().take(1).subscribe(state => this.setState({ ...state }))
-
     this.disposable = this.store.getter()
       .filterByUpdatedKey(KEY.increment, KEY.lastUpdated)
       .subscribe(state => this.setState({ ...state }))

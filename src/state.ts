@@ -1,4 +1,5 @@
-import { ReactiveStore, getObjectKeys, getReactiveStoreAsSingleton, LoopType } from 'ovrmrw-reactive-store'
+import * as logger from 'redux-logger'
+import { ReactiveStore, getObjectKeys, getReactiveStoreAsSingleton, Middleware } from 'ovrmrw-reactive-store'
 export { ReactiveStore }
 
 
@@ -13,9 +14,9 @@ export const initialState: AppState = {
 export const KEY = getObjectKeys(initialState)
 
 export const storeInstance = getReactiveStoreAsSingleton(initialState, {
-  concurrent: Number.POSITIVE_INFINITY,
-  output: true,
   // useFreeze: true,
+  // output: true,
+  reduxMiddlewares: [logger()] as Middleware[], // use redux-logger to output logs to Console instead of "output" option.
 })
 
 export class ReactiveStoreForAppState extends ReactiveStore<AppState> { }
